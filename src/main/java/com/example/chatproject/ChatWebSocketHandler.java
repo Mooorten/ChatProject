@@ -5,6 +5,8 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.*;
+import java.net.Socket;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                 System.out.println("Sender besked til session: " + webSocketSession.getId());
                 webSocketSession.sendMessage(new TextMessage(formattedMessage));
             }
+
         }
     }
 
@@ -51,4 +54,34 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         sessionUsernameMap.remove(session);
         System.out.println("Forbindelse lukket: " + session.getId());
     }
-}
+    public void sendFile(String Filepath) {
+        File file = new File(Filepath);
+        if (!file.exists()) {
+            System.out.println("file does not exist");
+        }
+        try (Socket fileSocket = new Socket("192.168.0.100", 5000);
+             FileInputStream fileInputStream = new FileInputStream(file);
+             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+             OutputStream outputStream = fileSocket.getOutputStream();
+             PrintWriter printWriter = new PrintWriter(outputStream, true)) {
+
+            // Send metadata (filnavn og filstørrelse)
+            printWriter.println(file.getName());
+            printWriter.println(file.length());
+
+            // Send fildata
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = bufferedInputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+
+            outputStream.flush();
+            System.out.println("File has been sent.");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    }

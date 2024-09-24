@@ -65,12 +65,13 @@
         }
 
         /* Modtagne beskeder i grøn */
-        #chatBox p {
+        #chatBox p.received-message {
             background-color: #78e08f; /* Grøn farve til modtagne beskeder */
         }
 
         .input-container {
             display: flex;
+            align-items: center;
         }
 
         #messageInput {
@@ -104,6 +105,24 @@
             background-color: rgba(255, 255, 255, 0.3);
         }
 
+        /* Emoji stil */
+        .emoji-button {
+            cursor: pointer;
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+
+        .file-upload {
+            display: flex;
+            align-items: center; /* Centrerer indholdet vertikalt */
+            margin-top: 20px; /* Giver afstand over */
+        }
+
+        input[type="file"] {
+            margin-right: 10px; /* Giver afstand til knappen */
+            color: #fff; /* Gør teksten hvid */
+        }
+
         @media (max-width: 576px) {
             .chat-container {
                 width: 90%;
@@ -123,6 +142,19 @@
     <div class="input-container">
         <input type="text" id="messageInput" placeholder="Skriv en besked">
         <button id="sendButton" onclick="sendMessage()">Send</button>
+        <!-- Emoji knapper -->
+        <span class="emoji-button" onclick="insertEmoji('😀')">😀</span>
+        <span class="emoji-button" onclick="insertEmoji('😂')">😂</span>
+        <span class="emoji-button" onclick="insertEmoji('❤️')">❤️</span>
+        <span class="emoji-button" onclick="insertEmoji('👍')">👍</span>
+        <span class="emoji-button" onclick="insertEmoji('🎉')">🎉</span>
+    </div>
+
+    <div class="file-upload">
+        <form action="/upload-file" method="post" enctype="multipart/form-data">
+            <input type="file" name="file" />
+            <button type="submit">Upload File</button>
+        </form>
     </div>
 </div>
 
@@ -155,6 +187,8 @@
         // Tilføj klassen 'own-message' hvis det er brugerens egen besked
         if (event.data.startsWith(username)) {
             message.classList.add('own-message');
+        } else {
+            message.classList.add('received-message'); // Tilføj klassen for modtagne beskeder
         }
 
         chatBox.appendChild(message);
@@ -169,6 +203,13 @@
             console.log("Besked sendt: " + message); // Log hvad der sendes
             document.getElementById('messageInput').value = ''; // Ryd inputfeltet
         }
+    }
+
+    // Indsæt emoji i inputfeltet
+    function insertEmoji(emoji) {
+        var inputField = document.getElementById('messageInput');
+        inputField.value += emoji; // Tilføj emoji til inputfeltet
+        inputField.focus(); // Sæt fokus tilbage på inputfeltet
     }
 
     // Event listener for "Enter"-tasten
