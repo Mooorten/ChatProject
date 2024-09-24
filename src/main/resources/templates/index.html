@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="da">
 <head>
     <meta charset="UTF-8">
-    <title>TCP Echo Server Chat</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
 </head>
 <body>
-<h1>TCP Echo Server Chat</h1>
+<h1>Chat Room</h1>
 
 <input type="text" id="messageInput" placeholder="Skriv en besked">
 <button onclick="sendMessage()">Send</button>
@@ -15,8 +16,24 @@
 </div>
 
 <script type="text/javascript">
+    // Hent brugernavnet fra HTML-attribut (sat af serveren)
+    var username = /*[[${username}]]*/ ''; // Thymeleaf bruges til at indsætte brugernavn her
+
     // Opret en WebSocket-forbindelse til serveren
     var socket = new WebSocket("ws://" + window.location.hostname + ":8080/chat");
+
+    // Log WebSocket-status
+    socket.onopen = function(event) {
+        console.log("WebSocket-forbindelse er åben.");
+    };
+
+    socket.onerror = function(event) {
+        console.log("WebSocket fejl:", event);
+    };
+
+    socket.onclose = function(event) {
+        console.log("WebSocket-forbindelsen er lukket.");
+    };
 
     // Håndter beskeder fra serveren
     socket.onmessage = function(event) {
@@ -32,6 +49,7 @@
         var message = document.getElementById('messageInput').value;
         if (message.trim() !== '') {
             socket.send(message); // Send beskeden til serveren via WebSocket
+            console.log("Besked sendt: " + message); // Log hvad der sendes
             document.getElementById('messageInput').value = ''; // Ryd inputfeltet
         }
     }

@@ -34,6 +34,7 @@ public class TcpClientController {
         User authenticatedUser = userUsecase.findLogin(user.getUsername(), user.getPassword());
         if (authenticatedUser != null) {
             session.setAttribute("currentUser", authenticatedUser);
+            session.setAttribute("username", authenticatedUser.getUsername()); // Gem brugernavnet i session
 
             // Opret en ny tråd til klientforbindelsen til chatserveren
             new Thread(() -> {
