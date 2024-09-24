@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>TCP Echo Server Chat</title>
+</head>
+<body>
+<h1>TCP Echo Server Chat</h1>
+
+<input type="text" id="messageInput" placeholder="Skriv en besked">
+<button onclick="sendMessage()">Send</button>
+
+<div id="chatBox" style="border:1px solid #ccc; padding:10px; width:300px; height:300px; overflow-y:scroll;">
+    <!-- Her vises beskederne -->
+</div>
+
+<script type="text/javascript">
+    // Opret en WebSocket-forbindelse til serveren
+    var socket = new WebSocket("ws://" + window.location.hostname + ":8080/chat");
+
+    // Håndter beskeder fra serveren
+    socket.onmessage = function(event) {
+        var chatBox = document.getElementById('chatBox');
+        var message = document.createElement('p');
+        message.innerText = event.data;
+        chatBox.appendChild(message);
+        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll til bunden
+    };
+
+    // Send besked til serveren
+    function sendMessage() {
+        var message = document.getElementById('messageInput').value;
+        if (message.trim() !== '') {
+            socket.send(message); // Send beskeden til serveren via WebSocket
+            document.getElementById('messageInput').value = ''; // Ryd inputfeltet
+        }
+    }
+</script>
+
+</body>
+</html>
