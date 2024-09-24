@@ -8,7 +8,7 @@
 <h1>TCP Echo Server Chat</h1>
 
 <input type="text" id="messageInput" placeholder="Skriv en besked">
-<button onclick="sendMessage()">Send</button>
+<button id="sendButton" onclick="sendMessage()">Send</button>
 
 <div id="chatBox" style="border:1px solid #ccc; padding:10px; width:300px; height:300px; overflow-y:scroll;">
     <!-- Her vises beskederne -->
@@ -35,6 +35,14 @@
             document.getElementById('messageInput').value = ''; // Ryd inputfeltet
         }
     }
+
+    // Event listener for "Enter"-tasten
+    document.getElementById('messageInput').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Forhindrer, at enter laver en ny linje
+            sendMessage(); // Sender beskeden
+        }
+    });
 </script>
 
 </body>
