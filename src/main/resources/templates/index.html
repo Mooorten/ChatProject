@@ -4,15 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Room</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #7F7FD5;
+            background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+            background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+            display: flex;
+            overflow: hidden;
+            width: 100%;
+            padding: 0;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chat-container {
+            width: 100%;
+            max-width: 1000px; /* Gør bredden endnu større */
+            height: 600px; /* Holder den nuværende højde */
+            background-color: rgba(255, 255, 255, 0.1); /* Transparent background */
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        #chatBox {
+            flex: 1;
+            border: none; /* Fjern kant */
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.05); /* Svag gennemsigtighed */
+            overflow-y: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        #chatBox p {
+            margin: 5px 0;
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 75%;
+            word-wrap: break-word;
+            color: #fff;
+        }
+
+        /* Brugers egne beskeder i blå */
+        #chatBox p.own-message {
+            background-color: #4a90e2; /* Blå farve til afsendte beskeder */
+            margin-left: auto;
+        }
+
+        /* Modtagne beskeder i grøn */
+        #chatBox p {
+            background-color: #78e08f; /* Grøn farve til modtagne beskeder */
+        }
+
+        .input-container {
+            display: flex;
+        }
+
+        #messageInput {
+            flex: 1;
+            padding: 10px;
+            border: none; /* Fjern kant */
+            border-radius: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+            background-color: rgba(255, 255, 255, 0.2); /* Transparent inputfelt */
+            color: #fff;
+            outline: none;
+        }
+
+        #messageInput::placeholder {
+            color: #ddd;
+        }
+
+        #sendButton {
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.2); /* Transparent knap */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        #sendButton:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 576px) {
+            .chat-container {
+                width: 90%;
+                height: 80vh;
+            }
+        }
+    </style>
 </head>
 <body>
-<h1>Chat Room</h1>
+<div class="chat-container">
+    <h1>Chat Room</h1>
 
-<input type="text" id="messageInput" placeholder="Skriv en besked">
-<button id="sendButton" onclick="sendMessage()">Send</button>
+    <div id="chatBox">
+        <!-- Her vises beskederne -->
+    </div>
 
-<div id="chatBox" style="border:1px solid #ccc; padding:10px; width:300px; height:300px; overflow-y:scroll;">
-    <!-- Her vises beskederne -->
+    <div class="input-container">
+        <input type="text" id="messageInput" placeholder="Skriv en besked">
+        <button id="sendButton" onclick="sendMessage()">Send</button>
+    </div>
 </div>
 
 <script type="text/javascript">
@@ -40,6 +151,12 @@
         var chatBox = document.getElementById('chatBox');
         var message = document.createElement('p');
         message.innerText = event.data;
+
+        // Tilføj klassen 'own-message' hvis det er brugerens egen besked
+        if (event.data.startsWith(username)) {
+            message.classList.add('own-message');
+        }
+
         chatBox.appendChild(message);
         chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll til bunden
     };
@@ -62,6 +179,5 @@
         }
     });
 </script>
-
 </body>
 </html>
