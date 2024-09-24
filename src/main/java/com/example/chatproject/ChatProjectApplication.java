@@ -10,5 +10,7 @@ public class ChatProjectApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(ChatProjectApplication.class, args);
+        TcpEchoServer t = new TcpEchoServer();
+        t.startServer();
     }
 }
