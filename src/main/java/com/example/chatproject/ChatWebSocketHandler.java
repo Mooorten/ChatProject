@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
-    // Holder styr på alle aktive sessions og deres tilknyttede brugernavne
     private Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
     private Map<WebSocketSession, String> sessionUsernameMap = new ConcurrentHashMap<>();
 
@@ -31,7 +30,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
         String username = sessionUsernameMap.get(session);
         String payload = message.getPayload();
 
-        // Unicast: "@modtager: besked"
         if (payload.startsWith("@")) {
             String[] parts = payload.split(":", 2);
             if (parts.length == 2) {
@@ -43,7 +41,17 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
                     targetSession.sendMessage(new TextMessage(privateMessage));
                     session.sendMessage(new TextMessage("Din private besked til <strong>" + targetUsername + "</strong>: " + parts[1].trim()));
                 } else {
-                    session.sendMessage(new TextMessage(targetUsername + "</strong> er ikke online."));
+                    session.sendMessage(new TextMessage(targetUsername + " er ikke online."));
+                }
+            }
+        } else if (payload.startsWith("/file:")) {
+            // Filbesked
+            String filename = payload.substring(6).trim();
+            String fileMessage = "<strong>" + username + ":</strong> Har delt en fil: <a href='/download-file?filename=" + filename + "' download>" + filename + "</a>";
+
+            for (WebSocketSession webSocketSession : sessions) {
+                if (webSocketSession.isOpen()) {
+                    webSocketSession.sendMessage(new TextMessage(fileMessage));
                 }
             }
         } else {

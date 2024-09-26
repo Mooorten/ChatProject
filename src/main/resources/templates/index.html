@@ -270,7 +270,9 @@
         </div>
         <div class="input-area">
             <input type="text" id="messageInput" placeholder="Skriv en besked">
+            <input type="file" id="fileInput">
             <button id="sendButton" onclick="sendMessage()">Send</button>
+            <button id="uploadButton" onclick="uploadFile()">Upload Fil</button>
         </div>
     </div>
 
@@ -314,6 +316,29 @@
         if (message.trim() !== '') {
             socket.send(message);
             document.getElementById('messageInput').value = '';
+        }
+    }
+
+    function uploadFile() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+
+        if (file) {
+            var formData = new FormData();
+            formData.append("file", file);
+
+            fetch("/upload-file", {
+                method: "POST",
+                body: formData
+            }).then(response => response.text()).then(data => {
+                if (data.includes("successfully")) {
+                    socket.send("/file:" + file.name);
+                } else {
+                    alert("Filupload fejlede: " + data);
+                }
+            }).catch(error => {
+                console.error("Error uploading file:", error);
+            });
         }
     }
 
