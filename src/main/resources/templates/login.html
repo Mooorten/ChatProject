@@ -1,72 +1,105 @@
 <!DOCTYPE html>
 <html lang="da">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
+
         .login-container {
             background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             max-width: 400px;
             width: 100%;
-        }
-        .login-container h2 {
             text-align: center;
+        }
+
+        .login-container img {
+            width: 80px;
             margin-bottom: 20px;
         }
+
+        .login-container h1 {
+            font-size: 24px;
+            font-weight: normal;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
         .login-container input {
             width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            font-size: 16px;
+            background-color: #f5f6f7;
         }
+
         .login-container button {
             width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
+            padding: 12px;
+            background-color: #0084ff;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
+            font-size: 16px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
+
         .login-container button:hover {
-            background-color: #45a049;
+            background-color: #005bb5;
         }
+
+        .login-container .checkbox-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .login-container .checkbox-container input {
+            margin-right: 8px;
+        }
+
         .login-container p {
-            text-align: center;
-            margin-top: 10px;
-        }
-        .login-container p a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-        .login-container p a:hover {
-            text-decoration: underline;
+            margin-top: 15px;
+            font-size: 14px;
+            color: #333;
         }
     </style>
 </head>
+
 <body>
 <div class="login-container">
-    <h2>Login</h2>
+
+    <!-- Title -->
+    <h1>Få kontakt til dine yndlingspersoner</h1>
+
+    <!-- Login form -->
     <form action="/login" method="post">
         <input type="text" name="username" placeholder="Brugernavn" required>
         <input type="password" name="password" placeholder="Adgangskode" required>
-        <button type="submit">Log ind</button>
+        <button type="submit">Fortsæt</button>
     </form>
+
+    <!-- Additional options (signup link) -->
     <p>Har du ikke en konto? <a href="/createUser">Tilmeld dig</a></p>
 </div>
 </body>
+
 </html>

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"com.example.chatproject", "service", "DBController"})  // Tilføj alle relevante pakker
+@ComponentScan(basePackages = {"com.example.chatproject", "service", "DBController"})
 public class ChatProjectApplication {
 
     public static void main(String[] args) {

@@ -19,7 +19,6 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        // Log session og username
         String username = (String) session.getAttributes().get("username");
         System.out.println("Forbindelse oprettet: " + username);
 
@@ -29,26 +28,48 @@ public class ChatWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        // Hent brugernavnet til sessionen
         String username = sessionUsernameMap.get(session);
-        String formattedMessage = username + ": " + message.getPayload();
+        String payload = message.getPayload();
 
-        System.out.println("Modtaget besked fra " + username + ": " + message.getPayload());
+        // Unicast: "@modtager: besked"
+        if (payload.startsWith("@")) {
+            String[] parts = payload.split(":", 2);
+            if (parts.length == 2) {
+                String targetUsername = parts[0].substring(1).trim();
+                String privateMessage = "<strong>" + username + ": </strong>" + parts[1].trim();
 
-        // Send beskeden til alle tilknyttede klienter
-        for (WebSocketSession webSocketSession : sessions) {
-            if (webSocketSession.isOpen()) {
-                System.out.println("Sender besked til session: " + webSocketSession.getId());
-                webSocketSession.sendMessage(new TextMessage(formattedMessage));
+                WebSocketSession targetSession = getSessionForUser(targetUsername);
+                if (targetSession != null && targetSession.isOpen()) {
+                    targetSession.sendMessage(new TextMessage(privateMessage));
+                    session.sendMessage(new TextMessage("Din private besked til <strong>" + targetUsername + "</strong>: " + parts[1].trim()));
+                } else {
+                    session.sendMessage(new TextMessage(targetUsername + "</strong> er ikke online."));
+                }
+            }
+        } else {
+            // Broadcast til alle
+            String broadcastMessage = "<strong>" + username + ":</strong> " + payload;
+            for (WebSocketSession webSocketSession : sessions) {
+                if (webSocketSession.isOpen()) {
+                    webSocketSession.sendMessage(new TextMessage(broadcastMessage));
+                }
             }
         }
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        // Når en klient lukker forbindelsen, fjerner vi sessionen fra listen og fjerner brugernavnet
         sessions.remove(session);
         sessionUsernameMap.remove(session);
         System.out.println("Forbindelse lukket: " + session.getId());
+    }
+
+    public WebSocketSession getSessionForUser(String username) {
+        for (Map.Entry<WebSocketSession, String> entry : sessionUsernameMap.entrySet()) {
+            if (entry.getValue().equals(username)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }

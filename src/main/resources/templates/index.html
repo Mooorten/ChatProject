@@ -3,62 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Room</title>
+    <title>Messenger Style Chat</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            background-color: white;
+            border-radius: 20px; /* Runde hjørner */
+            box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden; /* Sørger for at alt holder sig inden for de afrundede kanter */
+        }
+
+        /* Left sidebar (Chat List) */
+        .sidebar {
+            width: 30%;
+            border-right: 1px solid #dddfe2;
+            background-color: white;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 20px 0 0 20px; /* Runde hjørner i venstre side */
+        }
+
+        .sidebar h2 {
+            margin: 0;
+            padding: 10px 15px;
+            font-size: 20px;
+            color: #333;
+            border-bottom: 1px solid #dddfe2;
+        }
+
+        .search-bar {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #dddfe2;
+            border-radius: 20px; /* Runde kanter */
+            font-size: 14px;
+            color: #333;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .chat-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #dddfe2;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 15px; /* Runde kanter på chat-items */
+            margin: 5px 0;
+        }
+
+        .chat-item:hover {
+            background-color: #f0f2f5;
+        }
+
+        .chat-item img {
+            border-radius: 50%; /* Runde profilbilleder */
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+        }
+
+        .chat-info {
+            flex: 1;
+        }
+
+        .chat-info h4 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .chat-info p {
+            margin: 0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Chat section */
+        .chat-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            border-right: 1px solid #dddfe2;
+            border-radius: 0 20px 20px 0; /* Runde hjørner i højre side */
+        }
+
+        .chat-header {
+            padding: 15px;
+            border-bottom: 1px solid #dddfe2;
+            background-color: #f0f2f5;
+            border-radius: 0 20px 0 0; /* Runde kanter i toppen */
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #f7f8fa;
+            border-radius: 0 0 20px 0; /* Runde kanter i bunden */
+        }
+
+        .message {
+            max-width: 60%;
+            padding: 10px;
+            border-radius: 18px; /* Runde kanter på beskeder */
+            font-size: 14px;
+            position: relative;
+        }
+
+        .message.broadcast {
+            background-color: #e4e6eb;
+            align-self: flex-start;
+        }
+
+        .message.private {
+            background-color: #0084ff;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .message .timestamp {
+            font-size: 10px;
+            color: #999;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        /* Input area */
+        .input-area {
+            display: flex;
+            padding: 15px;
+            background-color: #f0f2f5;
+            border-radius: 0 0 20px 0; /* Runde kanter i bunden */
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px; /* Runde kanter på input */
+            border: 1px solid #dddfe2;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .input-area button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #0084ff;
+            color: white;
+            border: none;
+            border-radius: 20px; /* Runde kanter på knappen */
+            cursor: pointer;
+        }
+
+        .input-area button:hover {
+            background-color: #005bb5;
+        }
+
+        /* User Profile Section */
+        .user-profile {
+            width: 25%;
+            background-color: white;
+            padding: 20px;
+            border-radius: 0 20px 20px 0; /* Runde hjørner på højre side */
+        }
+
+        .user-profile img {
+            border-radius: 50%; /* Runde profilbilleder */
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .user-profile h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-profile p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-<h1>Chat Room</h1>
 
-<input type="text" id="messageInput" placeholder="Skriv en besked">
-<button id="sendButton" onclick="sendMessage()">Send</button>
+<div class="container">
+    <!-- Left Sidebar (Chat List) -->
+    <div class="sidebar">
+        <h2>Chats</h2>
+        <input type="text" class="search-bar" placeholder="Søg i beskeder">
+        <ul class="chat-list">
+            <li class="chat-item">
+                <img src="https://via.placeholder.com/40" alt="Profile">
+                <div class="chat-info">
+                    <h4>Søren Tomczyk</h4>
+                    <p>Ham Vincent er ret god til...</p>
+                </div>
+            </li>
+            <li class="chat-item">
+                <img src="https://via.placeholder.com/40" alt="Profile">
+                <div class="chat-info">
+                    <h4>Diaco Sabir</h4>
+                    <p>Jeg har glemt min oplader...</p>
+                </div>
+            </li>
+            <li class="chat-item">
+                <img src="https://via.placeholder.com/40" alt="Profile">
+                <div class="chat-info">
+                    <h4>Morten Friis Davidsen</h4>
+                    <p>Cristiano Ronaldo Seeewy</p>
+                </div>
+            </li>
+            <li class="chat-item">
+                <img src="https://via.placeholder.com/40" alt="Profile">
+                <div class="chat-info">
+                    <h4>Mikkel Krøll</h4>
+                    <p>tihi.. ham Søren der...</p>
+                </div>
+            </li>
+            <li class="chat-item">
+                <img src="https://via.placeholder.com/40" alt="Profile">
+                <div class="chat-info">
+                    <h4>Mikkel Hansen</h4>
+                    <p>I får allesammen fri i dag...</p>
+                </div>
+            </li>
+        </ul>
+    </div>
 
-<div id="chatBox" style="border:1px solid #ccc; padding:10px; width:300px; height:300px; overflow-y:scroll;">
-    <!-- Her vises beskederne -->
+    <!-- Chat Section -->
+    <div class="chat-section">
+        <div class="chat-header">
+            <h3>Datamatiker Zealand</h3>
+        </div>
+        <div id="chatBox" class="chat-box">
+            <!-- Messages will be displayed here -->
+        </div>
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Skriv en besked">
+            <button id="sendButton" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- User Profile Section -->
+    <div class="user-profile">
+        <img src="https://via.placeholder.com/80" alt="Profile">
+        <h3>Datamatiker Zealand</h3>
+        <p>Skriv noget her :)</p>
+    </div>
 </div>
 
 <script type="text/javascript">
-    // Hent brugernavnet fra HTML-attribut (sat af serveren)
-    var username = /*[[${username}]]*/ ''; // Thymeleaf bruges til at indsætte brugernavn her
-
-    // Opret en WebSocket-forbindelse til serveren
     var socket = new WebSocket("ws://" + window.location.hostname + ":8080/chat");
 
-    // Log WebSocket-status
-    socket.onopen = function(event) {
+    socket.onopen = function() {
         console.log("WebSocket-forbindelse er åben.");
     };
 
-    socket.onerror = function(event) {
-        console.log("WebSocket fejl:", event);
-    };
-
-    socket.onclose = function(event) {
-        console.log("WebSocket-forbindelsen er lukket.");
-    };
-
-    // Håndter beskeder fra serveren
     socket.onmessage = function(event) {
         var chatBox = document.getElementById('chatBox');
-        var message = document.createElement('p');
-        message.innerText = event.data;
+        var message = document.createElement('div');
+        var timestamp = new Date().toLocaleTimeString();
+
+        // Hvis beskeden indeholder "(Privat)", markér den som en privat besked
+        if (event.data.includes('(Privat)')) {
+            message.classList.add('message', 'private');
+        } else {
+            message.classList.add('message', 'broadcast');
+        }
+
+        // Tilføj tidstempel og besked til chatten
+        message.innerHTML = event.data + '<div class="timestamp">' + timestamp + '</div>';
         chatBox.appendChild(message);
-        chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll til bunden
+
+        // Scroll automatisk til bunden af chatten
+        chatBox.scrollTop = chatBox.scrollHeight;
     };
 
-    // Send besked til serveren
     function sendMessage() {
         var message = document.getElementById('messageInput').value;
         if (message.trim() !== '') {
-            socket.send(message); // Send beskeden til serveren via WebSocket
-            console.log("Besked sendt: " + message); // Log hvad der sendes
-            document.getElementById('messageInput').value = ''; // Ryd inputfeltet
+            socket.send(message);
+            document.getElementById('messageInput').value = '';
         }
     }
 
-    // Event listener for "Enter"-tasten
     document.getElementById('messageInput').addEventListener('keypress', function(event) {
         if (event.key === 'Enter') {
-            event.preventDefault(); // Forhindrer, at enter laver en ny linje
-            sendMessage(); // Sender beskeden
+            sendMessage();
         }
     });
 </script>

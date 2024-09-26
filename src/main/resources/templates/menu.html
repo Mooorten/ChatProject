@@ -6,8 +6,8 @@
     <title>Chat Menu</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7fa;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,15 +16,17 @@
         }
         .menu-container {
             background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             max-width: 400px;
             width: 100%;
         }
         .menu-container h2 {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            font-size: 24px;
+            color: #333;
         }
         .menu-container a {
             display: block;
@@ -32,14 +34,15 @@
             text-align: center;
             padding: 15px;
             margin: 10px 0;
-            background-color: #4CAF50;
+            background-color: #007bff;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 16px;
+            transition: background-color 0.3s ease;
         }
         .menu-container a:hover {
-            background-color: #45a049;
+            background-color: #0056b3;
         }
         .menu-container a.logout {
             background-color: #f44336;
@@ -54,10 +57,9 @@
     <h2>Chat Menu</h2>
     <a href="/chat-room">Start Ny Chat</a>
     <a href="/view-chats">Se Dine Chats</a>
-    <a th:href="@{/user/edit/{id}(id=${currentUser.userid})}" class="edit-button">Rediger Bruger</a>
-    <a th:href="@{/user/delete/{id}(id=${currentUser.userid})}" class="delete-button" onclick="return confirm('Er du sikker på, at du vil slette din profil?');">Slet Bruger</a>
+    <a href="/edit-profile" class="edit-button">Rediger Bruger</a>
+    <a href="/delete-profile" class="delete-button" onclick="return confirm('Er du sikker på, at du vil slette din profil?');">Slet Bruger</a>
     <a href="/logout" class="logout">Log Ud</a>
-
 </div>
 </body>
 </html>
