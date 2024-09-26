@@ -2,10 +2,7 @@ package com.example.chatproject;
 
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -13,7 +10,6 @@ import java.net.Socket;
 public class TcpEchoServer {
 
     private static final int PORT = 9090;
-
 
     public void startServer() {
         new Thread(() -> {
@@ -40,5 +36,11 @@ public class TcpEchoServer {
                 System.out.println("Server error: " + e.getMessage());
             }
         }).start();
+
+
+
+
+        }
+
     }
-}
+
