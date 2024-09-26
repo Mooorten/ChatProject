@@ -5,6 +5,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,71 +14,72 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ChatWebSocketHandler extends TextWebSocketHandler {
 
-    private Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
-    private Map<WebSocketSession, String> sessionUsernameMap = new ConcurrentHashMap<>();
+    private Set<WebSocketSession> activeSessions = Collections.synchronizedSet(new HashSet<>());
+    private Map<WebSocketSession, String> sessionUsernames = new ConcurrentHashMap<>();
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+    public void afterConnectionEstablished(WebSocketSession session) {
         String username = (String) session.getAttributes().get("username");
-        System.out.println("Forbindelse oprettet: " + username);
-
-        sessions.add(session);
-        sessionUsernameMap.put(session, username);
+        activeSessions.add(session);
+        sessionUsernames.put(session, username);
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        String username = sessionUsernameMap.get(session);
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+        String username = sessionUsernames.get(session);
         String payload = message.getPayload();
 
         if (payload.startsWith("@")) {
-            String[] parts = payload.split(":", 2);
-            if (parts.length == 2) {
-                String targetUsername = parts[0].substring(1).trim();
-                String privateMessage = "<strong>" + username + ": </strong>" + parts[1].trim();
+            // Håndter private beskeder
+            String[] messageParts = payload.split(":", 2);
+            if (messageParts.length == 2) {
+                String targetUser = messageParts[0].substring(1).trim();
+                String privateMessage = "<strong>" + username + ":</strong> " + messageParts[1].trim();
+                WebSocketSession targetSession = getSessionByUsername(targetUser);
 
-                WebSocketSession targetSession = getSessionForUser(targetUsername);
                 if (targetSession != null && targetSession.isOpen()) {
                     targetSession.sendMessage(new TextMessage(privateMessage));
-                    session.sendMessage(new TextMessage("Din private besked til <strong>" + targetUsername + "</strong>: " + parts[1].trim()));
+                    session.sendMessage(new TextMessage("Private besked til <strong>" + targetUser + ":</strong> " + messageParts[1].trim()));
                 } else {
-                    session.sendMessage(new TextMessage(targetUsername + " er ikke online."));
+                    session.sendMessage(new TextMessage(targetUser + " er ikke online."));
                 }
             }
         } else if (payload.startsWith("/file:")) {
-            // Filbesked
+            // Håndter fildeling
             String filename = payload.substring(6).trim();
-            String fileMessage = "<strong>" + username + ":</strong> Har delt en fil: <a href='/download-file?filename=" + filename + "' download>" + filename + "</a>";
-
-            for (WebSocketSession webSocketSession : sessions) {
-                if (webSocketSession.isOpen()) {
-                    webSocketSession.sendMessage(new TextMessage(fileMessage));
-                }
-            }
+            String fileMessage = "<strong>" + username + ":</strong> Har delt en fil: <a href='/download-file?filename=" + filename + "'>" + filename + "</a>";
+            broadcastToAll(fileMessage);
         } else {
-            // Broadcast til alle
+            // Broadcast almindelige beskeder til alle
             String broadcastMessage = "<strong>" + username + ":</strong> " + payload;
-            for (WebSocketSession webSocketSession : sessions) {
-                if (webSocketSession.isOpen()) {
-                    webSocketSession.sendMessage(new TextMessage(broadcastMessage));
-                }
-            }
+            broadcastToAll(broadcastMessage);
         }
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sessions.remove(session);
-        sessionUsernameMap.remove(session);
-        System.out.println("Forbindelse lukket: " + session.getId());
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        activeSessions.remove(session);
+        sessionUsernames.remove(session);
     }
 
-    public WebSocketSession getSessionForUser(String username) {
-        for (Map.Entry<WebSocketSession, String> entry : sessionUsernameMap.entrySet()) {
-            if (entry.getValue().equals(username)) {
-                return entry.getKey();
+    private WebSocketSession getSessionByUsername(String username) {
+        return sessionUsernames.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().equals(username))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private void broadcastToAll(String message) {
+        for (WebSocketSession session : activeSessions) {
+            if (session.isOpen()) {
+                try {
+                    session.sendMessage(new TextMessage(message));
+                } catch (Exception ignored) {
+                    // Ignorer fejl under udsendelse
+                }
             }
         }
-        return null;
     }
 }

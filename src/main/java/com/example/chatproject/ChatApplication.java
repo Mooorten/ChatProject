@@ -6,11 +6,9 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.example.chatproject", "service", "DBController"})
-public class ChatProjectApplication {
+public class ChatApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ChatProjectApplication.class, args);
-        TcpEchoServer t = new TcpEchoServer();
-        t.startServer();
+        SpringApplication.run(ChatApplication.class, args);
     }
 }

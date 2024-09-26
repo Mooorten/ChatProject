@@ -35,9 +35,7 @@ public class FileController {
             file.transferTo(destinationFile);
 
             return new ResponseEntity<>("File uploaded successfully: " + file.getOriginalFilename(), HttpStatus.OK);
-
         } catch (IOException e) {
-            e.printStackTrace();
             return new ResponseEntity<>("File upload failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

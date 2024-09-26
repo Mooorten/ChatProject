@@ -14,6 +14,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(new ChatWebSocketHandler(), "/chat")
                 .setAllowedOrigins("*")
-                .addInterceptors(new HttpSessionHandshakeInterceptor()); // Tilføj denne linje for at få adgang til session-attributter
+                .addInterceptors(new HttpSessionHandshakeInterceptor());
     }
 }
