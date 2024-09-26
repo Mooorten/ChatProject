@@ -21,12 +21,11 @@
             max-width: 1200px;
             height: 90vh;
             background-color: white;
-            border-radius: 20px; /* Runde hjørner */
+            border-radius: 20px;
             box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden; /* Sørger for at alt holder sig inden for de afrundede kanter */
+            overflow: hidden;
         }
 
-        /* Left sidebar (Chat List) */
         .sidebar {
             width: 30%;
             border-right: 1px solid #dddfe2;
@@ -34,7 +33,7 @@
             padding: 10px;
             display: flex;
             flex-direction: column;
-            border-radius: 20px 0 0 20px; /* Runde hjørner i venstre side */
+            border-radius: 20px 0 0 20px;
         }
 
         .sidebar h2 {
@@ -49,7 +48,7 @@
             margin: 15px 0;
             padding: 10px;
             border: 1px solid #dddfe2;
-            border-radius: 20px; /* Runde kanter */
+            border-radius: 20px;
             font-size: 14px;
             color: #333;
             width: 100%;
@@ -70,7 +69,7 @@
             border-bottom: 1px solid #dddfe2;
             cursor: pointer;
             transition: background-color 0.3s;
-            border-radius: 15px; /* Runde kanter på chat-items */
+            border-radius: 15px;
             margin: 5px 0;
         }
 
@@ -79,7 +78,7 @@
         }
 
         .chat-item img {
-            border-radius: 50%; /* Runde profilbilleder */
+            border-radius: 50%;
             margin-right: 10px;
             width: 40px;
             height: 40px;
@@ -101,21 +100,20 @@
             color: #666;
         }
 
-        /* Chat section */
         .chat-section {
             flex: 1;
             display: flex;
             flex-direction: column;
             background-color: #fff;
             border-right: 1px solid #dddfe2;
-            border-radius: 0 20px 20px 0; /* Runde hjørner i højre side */
+            border-radius: 0 20px 20px 0;
         }
 
         .chat-header {
             padding: 15px;
             border-bottom: 1px solid #dddfe2;
             background-color: #f0f2f5;
-            border-radius: 0 20px 0 0; /* Runde kanter i toppen */
+            border-radius: 0 20px 0 0;
         }
 
         .chat-box {
@@ -126,13 +124,13 @@
             flex-direction: column;
             gap: 10px;
             background-color: #f7f8fa;
-            border-radius: 0 0 20px 0; /* Runde kanter i bunden */
+            border-radius: 0 0 20px 0;
         }
 
         .message {
             max-width: 60%;
             padding: 10px;
-            border-radius: 18px; /* Runde kanter på beskeder */
+            border-radius: 18px;
             font-size: 14px;
             position: relative;
         }
@@ -155,18 +153,17 @@
             text-align: right;
         }
 
-        /* Input area */
         .input-area {
             display: flex;
             padding: 15px;
             background-color: #f0f2f5;
-            border-radius: 0 0 20px 0; /* Runde kanter i bunden */
+            border-radius: 0 0 20px 0;
         }
 
         .input-area input {
             flex: 1;
             padding: 10px;
-            border-radius: 20px; /* Runde kanter på input */
+            border-radius: 20px;
             border: 1px solid #dddfe2;
             font-size: 14px;
             outline: none;
@@ -178,7 +175,7 @@
             background-color: #0084ff;
             color: white;
             border: none;
-            border-radius: 20px; /* Runde kanter på knappen */
+            border-radius: 20px;
             cursor: pointer;
         }
 
@@ -186,16 +183,21 @@
             background-color: #005bb5;
         }
 
-        /* User Profile Section */
+        .emoji-button {
+            cursor: pointer;
+            font-size: 1.5em;
+            margin: 0 5px;
+        }
+
         .user-profile {
             width: 25%;
             background-color: white;
             padding: 20px;
-            border-radius: 0 20px 20px 0; /* Runde hjørner på højre side */
+            border-radius: 0 20px 20px 0;
         }
 
         .user-profile img {
-            border-radius: 50%; /* Runde profilbilleder */
+            border-radius: 50%;
             width: 80px;
             height: 80px;
             margin-bottom: 10px;
@@ -272,6 +274,13 @@
             <input type="text" id="messageInput" placeholder="Skriv en besked">
             <input type="file" id="fileInput">
             <button id="sendButton" onclick="handleSend()">Send</button>
+
+            <!-- Emoji knapper -->
+            <span class="emoji-button" onclick="insertEmoji('😀')">😀</span>
+            <span class="emoji-button" onclick="insertEmoji('😂')">😂</span>
+            <span class="emoji-button" onclick="insertEmoji('❤️')">❤️</span>
+            <span class="emoji-button" onclick="insertEmoji('👍')">👍</span>
+            <span class="emoji-button" onclick="insertEmoji('🎉')">🎉</span>
         </div>
     </div>
 
@@ -346,6 +355,12 @@
         }).catch(error => {
             console.error("Error uploading file:", error);
         });
+    }
+
+    function insertEmoji(emoji) {
+        var input = document.getElementById('messageInput');
+        input.value += emoji;
+        input.focus();
     }
 
     document.getElementById('messageInput').addEventListener('keypress', function(event) {
