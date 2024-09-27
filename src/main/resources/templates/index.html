@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vincent-Chat.</title>
+    <title>Vincent-Chat</title>
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -18,7 +18,7 @@
         .container {
             display: flex;
             width: 100%;
-            max-width: 1200px;
+            max-width: 900px; /* Reduceret bredde */
             height: 90vh;
             background-color: white;
             border-radius: 20px;
@@ -105,7 +105,6 @@
             display: flex;
             flex-direction: column;
             background-color: #fff;
-            border-right: 1px solid #dddfe2;
             border-radius: 0 20px 20px 0;
         }
 
@@ -155,18 +154,33 @@
 
         .input-area {
             display: flex;
+            align-items: center;
             padding: 15px;
             background-color: #f0f2f5;
             border-radius: 0 0 20px 0;
         }
 
-        .input-area input {
+        .input-area input[type="text"] {
             flex: 1;
             padding: 10px;
             border-radius: 20px;
             border: 1px solid #dddfe2;
             font-size: 14px;
             outline: none;
+        }
+
+        .input-area input[type="file"] {
+            display: none;
+        }
+
+        .file-label {
+            padding: 10px;
+            margin-left: 10px;
+            background-color: #dddfe2;
+            color: #333;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
         }
 
         .input-area button {
@@ -183,37 +197,34 @@
             background-color: #005bb5;
         }
 
+        .emoji-picker {
+            position: absolute;
+            bottom: 60px;
+            background-color: white;
+            border: 1px solid #dddfe2;
+            border-radius: 10px;
+            padding: 10px;
+            display: none;
+            flex-wrap: wrap;
+            max-width: 200px;
+        }
+
         .emoji-button {
             cursor: pointer;
             font-size: 1.5em;
-            margin: 0 5px;
+            margin: 5px;
         }
 
-        .user-profile {
-            width: 25%;
-            background-color: white;
-            padding: 20px;
-            border-radius: 0 20px 20px 0;
+        .emoji-toggle {
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 1.5em;
         }
 
-        .user-profile img {
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            margin-bottom: 10px;
+        .emoji-toggle:hover {
+            color: #005bb5;
         }
 
-        .user-profile h3 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .user-profile p {
-            color: #666;
-            font-size: 14px;
-            margin: 0;
-        }
     </style>
 </head>
 <body>
@@ -272,24 +283,25 @@
         </div>
         <div class="input-area">
             <input type="text" id="messageInput" placeholder="Skriv en besked">
+            <label for="fileInput" class="file-label">Vælg fil</label>
             <input type="file" id="fileInput">
             <button id="sendButton" onclick="handleSend()">Send</button>
-
-            <!-- Emoji knapper -->
-            <span class="emoji-button" onclick="insertEmoji('😀')">😀</span>
-            <span class="emoji-button" onclick="insertEmoji('😂')">😂</span>
-            <span class="emoji-button" onclick="insertEmoji('❤️')">❤️</span>
-            <span class="emoji-button" onclick="insertEmoji('👍')">👍</span>
-            <span class="emoji-button" onclick="insertEmoji('🎉')">🎉</span>
+            <span class="emoji-toggle" onclick="toggleEmojiPicker()">😊</span>
         </div>
     </div>
+</div>
 
-    <!-- User Profile Section -->
-    <div class="user-profile">
-        <img src="https://via.placeholder.com/80" alt="Profile">
-        <h3>Datamatiker Zealand</h3>
-        <p>Skriv noget her :)</p>
-    </div>
+<!-- Emoji Picker -->
+<div id="emojiPicker" class="emoji-picker">
+    <span class="emoji-button" onclick="insertEmoji('😀')">😀</span>
+    <span class="emoji-button" onclick="insertEmoji('😂')">😂</span>
+    <span class="emoji-button" onclick="insertEmoji('❤️')">❤️</span>
+    <span class="emoji-button" onclick="insertEmoji('👍')">👍</span>
+    <span class="emoji-button" onclick="insertEmoji('🎉')">🎉</span>
+    <span class="emoji-button" onclick="insertEmoji('🔥')">🔥</span>
+    <span class="emoji-button" onclick="insertEmoji('😍')">😍</span>
+    <span class="emoji-button" onclick="insertEmoji('😎')">😎</span>
+    <!-- Flere emojis kan tilføjes her -->
 </div>
 
 <script type="text/javascript">
@@ -361,6 +373,15 @@
         var input = document.getElementById('messageInput');
         input.value += emoji;
         input.focus();
+    }
+
+    function toggleEmojiPicker() {
+        var emojiPicker = document.getElementById('emojiPicker');
+        if (emojiPicker.style.display === 'none' || emojiPicker.style.display === '') {
+            emojiPicker.style.display = 'flex';
+        } else {
+            emojiPicker.style.display = 'none';
+        }
     }
 
     document.getElementById('messageInput').addEventListener('keypress', function(event) {
